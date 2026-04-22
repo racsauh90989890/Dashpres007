@@ -1,4 +1,1407 @@
-# CENGOB Bolivia — IAE v28
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Dashboard Ejecutivo Presidencial | CENGOB Bolivia</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/radar.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  /* Paleta ejecutiva mejorada */
+  --primary-dark:#042517;
+  --primary:#0A3D2B;
+  --primary-light:#1a5940;
+  --accent-gold:#C8A050;
+  --accent-gold-light:#E5C675;
+  
+  /* Semáforos */
+  --status-green:#10B981;
+  --status-yellow:#F59E0B;
+  --status-red:#EF4444;
+  --status-gray:#6B7280;
+  
+  /* Neutrales */
+  --bg-primary:#F8FAFB;
+  --bg-secondary:#FFFFFF;
+  --bg-tertiary:#F3F4F6;
+  --border-light:#E5E7EB;
+  --border-medium:#D1D5DB;
+  --text-primary:#111827;
+  --text-secondary:#6B7280;
+  --text-tertiary:#9CA3AF;
+  
+  /* Sombras */
+  --shadow-sm:0 1px 2px 0 rgba(0,0,0,0.05);
+  --shadow-md:0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -1px rgba(0,0,0,0.06);
+  --shadow-lg:0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -2px rgba(0,0,0,0.05);
+  --shadow-xl:0 20px 25px -5px rgba(0,0,0,0.1),0 10px 10px -5px rgba(0,0,0,0.04);
+}
+
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg-primary);
+  color:var(--text-primary);
+  min-height:100vh;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   HEADER EJECUTIVO
+   ══════════════════════════════════════════════════════════════════════════ */
+.header{
+  background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary) 100%);
+  border-bottom:3px solid var(--accent-gold);
+  position:sticky;
+  top:0;
+  z-index:300;
+  box-shadow:var(--shadow-xl);
+}
+
+.header-content{
+  max-width:1600px;
+  margin:0 auto;
+  padding:1.25rem 2rem;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1.5rem;
+}
+
+.header-title-section{
+  flex:1;
+}
+
+.header-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;
+  font-size:1.75rem;
+  color:#FFFFFF;
+  letter-spacing:-0.02em;
+  line-height:1.2;
+  margin-bottom:0.25rem;
+}
+
+.header-subtitle{
+  font-size:0.875rem;
+  color:rgba(255,255,255,0.7);
+  font-weight:500;
+}
+
+.header-badge{
+  background:var(--accent-gold);
+  color:var(--primary-dark);
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;
+  font-size:0.75rem;
+  padding:0.5rem 1rem;
+  border-radius:6px;
+  letter-spacing:0.05em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  box-shadow:0 2px 8px rgba(200,160,80,0.3);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   NAVEGACIÓN TABS
+   ══════════════════════════════════════════════════════════════════════════ */
+.nav-tabs{
+  background:var(--primary-dark);
+  border-top:1px solid rgba(255,255,255,0.08);
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+.nav-tabs-container{
+  max-width:1600px;
+  margin:0 auto;
+  padding:0 2rem;
+  display:flex;
+  gap:0.25rem;
+}
+
+.nav-tab{
+  background:transparent;
+  border:none;
+  color:rgba(255,255,255,0.6);
+  font-family:'Inter',sans-serif;
+  font-size:0.875rem;
+  font-weight:600;
+  padding:1rem 1.5rem;
+  cursor:pointer;
+  border-bottom:3px solid transparent;
+  transition:all 0.2s ease;
+  white-space:nowrap;
+  position:relative;
+}
+
+.nav-tab:hover{
+  color:rgba(255,255,255,0.9);
+  background:rgba(255,255,255,0.05);
+}
+
+.nav-tab.active{
+  color:var(--accent-gold);
+  border-bottom-color:var(--accent-gold);
+  background:rgba(200,160,80,0.08);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MAIN CONTAINER
+   ══════════════════════════════════════════════════════════════════════════ */
+.main-container{
+  max-width:1600px;
+  margin:0 auto;
+  padding:2rem;
+}
+
+.tab-content{
+  display:none;
+}
+
+.tab-content.active{
+  display:block;
+  animation:fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   SUMMARY STATS
+   ══════════════════════════════════════════════════════════════════════════ */
+.summary-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:1.5rem;
+  margin-bottom:2rem;
+}
+
+.summary-stat{
+  background:var(--bg-secondary);
+  border-radius:12px;
+  padding:1.75rem 1.5rem;
+  box-shadow:var(--shadow-md);
+  border-left:4px solid var(--primary);
+  transition:all 0.3s ease;
+}
+
+.summary-stat:hover{
+  transform:translateY(-4px);
+  box-shadow:var(--shadow-lg);
+}
+
+.summary-stat-label{
+  font-size:0.875rem;
+  font-weight:600;
+  color:var(--text-secondary);
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+  margin-bottom:0.75rem;
+}
+
+.summary-stat-value{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;
+  font-size:2.5rem;
+  color:var(--primary);
+  line-height:1;
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+}
+
+.summary-stat-icon{
+  font-size:2rem;
+  filter:grayscale(0.3);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   CARDS GRID
+   ══════════════════════════════════════════════════════════════════════════ */
+.cards-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:1.5rem;
+  margin-bottom:2rem;
+}
+
+.priority-card{
+  background:var(--bg-secondary);
+  border-radius:12px;
+  padding:1.5rem;
+  box-shadow:var(--shadow-md);
+  border-left:4px solid var(--accent-gold);
+  transition:all 0.3s ease;
+  position:relative;
+  overflow:hidden;
+}
+
+.priority-card:hover{
+  transform:translateY(-6px);
+  box-shadow:var(--shadow-xl);
+  border-left-width:6px;
+}
+
+.priority-card::before{
+  content:'';
+  position:absolute;
+  top:0;
+  right:0;
+  width:100px;
+  height:100px;
+  background:radial-gradient(circle at top right,rgba(200,160,80,0.08),transparent 70%);
+  pointer-events:none;
+}
+
+.card-header{
+  margin-bottom:1.25rem;
+}
+
+.card-title{
+  font-size:0.75rem;
+  font-weight:700;
+  color:var(--text-tertiary);
+  text-transform:uppercase;
+  letter-spacing:0.1em;
+  margin-bottom:0.75rem;
+}
+
+.card-name{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:600;
+  font-size:1.125rem;
+  color:var(--text-primary);
+  line-height:1.4;
+  min-height:60px;
+  display:flex;
+  align-items:center;
+}
+
+.gauge-wrapper{
+  position:relative;
+  width:100%;
+  height:200px;
+  margin:0 auto;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   SECTION CONTAINERS
+   ══════════════════════════════════════════════════════════════════════════ */
+.section-container{
+  background:var(--bg-secondary);
+  border-radius:12px;
+  padding:2rem;
+  box-shadow:var(--shadow-md);
+  margin-bottom:2rem;
+}
+
+.section-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:2rem;
+  padding-bottom:1rem;
+  border-bottom:2px solid var(--border-light);
+}
+
+.section-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;
+  font-size:1.5rem;
+  color:var(--primary);
+  letter-spacing:-0.02em;
+}
+
+.section-subtitle{
+  font-size:0.875rem;
+  color:var(--text-secondary);
+  margin-top:0.25rem;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   CHARTS
+   ══════════════════════════════════════════════════════════════════════════ */
+.chart-container{
+  position:relative;
+  height:400px;
+  margin-bottom:1.5rem;
+}
+
+.chart-container-small{
+  position:relative;
+  height:300px;
+}
+
+.charts-split{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:2rem;
+  margin-bottom:1.5rem;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MINISTERIOS
+   ══════════════════════════════════════════════════════════════════════════ */
+.ministerios-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(350px,1fr));
+  gap:1.5rem;
+}
+
+.ministerio-card{
+  background:var(--bg-secondary);
+  border-radius:12px;
+  padding:1.5rem;
+  box-shadow:var(--shadow-md);
+  border-left:4px solid var(--primary);
+  transition:all 0.3s ease;
+}
+
+.ministerio-card:hover{
+  transform:translateY(-4px);
+  box-shadow:var(--shadow-lg);
+}
+
+.ministerio-name{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:600;
+  font-size:1rem;
+  color:var(--primary);
+  margin-bottom:1.25rem;
+  min-height:50px;
+  display:flex;
+  align-items:center;
+}
+
+.ministerio-stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:0.75rem;
+  margin-bottom:1rem;
+}
+
+.ministerio-stat{
+  text-align:center;
+  padding:0.75rem 0.5rem;
+  border-radius:8px;
+  background:var(--bg-tertiary);
+  transition:all 0.2s ease;
+}
+
+.ministerio-stat:hover{
+  transform:scale(1.05);
+}
+
+.ministerio-stat-value{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;
+  font-size:1.5rem;
+  line-height:1;
+  margin-bottom:0.25rem;
+}
+
+.ministerio-stat-label{
+  font-size:0.75rem;
+  font-weight:600;
+  color:var(--text-secondary);
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+}
+
+.stat-green .ministerio-stat-value{color:var(--status-green)}
+.stat-yellow .ministerio-stat-value{color:var(--status-yellow)}
+.stat-red .ministerio-stat-value{color:var(--status-red)}
+.stat-gray .ministerio-stat-value{color:var(--status-gray)}
+
+.ministerio-total{
+  text-align:center;
+  font-size:0.875rem;
+  color:var(--text-secondary);
+  padding-top:1rem;
+  border-top:1px solid var(--border-light);
+}
+
+.ministerio-total strong{
+  color:var(--primary);
+  font-weight:700;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PRIORIDADES LIST
+   ══════════════════════════════════════════════════════════════════════════ */
+.prioridades-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+  gap:1.5rem;
+}
+
+.prioridad-item{
+  background:var(--bg-secondary);
+  border-radius:12px;
+  padding:1.5rem;
+  box-shadow:var(--shadow-md);
+  border-left:4px solid var(--accent-gold);
+  cursor:pointer;
+  transition:all 0.3s ease;
+}
+
+.prioridad-item:hover{
+  transform:translateY(-4px);
+  box-shadow:var(--shadow-lg);
+  border-left-width:6px;
+}
+
+.prioridad-header{
+  display:flex;
+  align-items:flex-start;
+  gap:0.75rem;
+  margin-bottom:1rem;
+}
+
+.prioridad-code{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;
+  font-size:0.875rem;
+  color:var(--accent-gold);
+  background:rgba(200,160,80,0.1);
+  padding:0.375rem 0.75rem;
+  border-radius:6px;
+  flex-shrink:0;
+  border:1px solid rgba(200,160,80,0.2);
+}
+
+.prioridad-name{
+  font-weight:600;
+  font-size:0.9375rem;
+  color:var(--text-primary);
+  line-height:1.4;
+  flex:1;
+}
+
+.prioridad-eje{
+  font-size:0.8125rem;
+  color:var(--text-tertiary);
+  margin-bottom:1rem;
+  font-weight:500;
+}
+
+.prioridad-gauge{
+  margin-top:1rem;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MODAL
+   ══════════════════════════════════════════════════════════════════════════ */
+.modal{
+  display:none;
+  position:fixed;
+  z-index:1000;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.6);
+  backdrop-filter:blur(4px);
+  overflow:auto;
+  animation:fadeIn 0.2s ease;
+}
+
+.modal.show{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:1rem;
+}
+
+.modal-content{
+  background:var(--bg-secondary);
+  border-radius:16px;
+  padding:2rem;
+  max-width:700px;
+  width:100%;
+  max-height:90vh;
+  overflow-y:auto;
+  box-shadow:var(--shadow-xl);
+  animation:slideUp 0.3s ease;
+}
+
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.modal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-bottom:1.5rem;
+  padding-bottom:1rem;
+  border-bottom:2px solid var(--border-light);
+}
+
+.modal-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;
+  font-size:1.5rem;
+  color:var(--primary);
+  letter-spacing:-0.02em;
+  flex:1;
+  line-height:1.3;
+}
+
+.modal-close{
+  background:var(--bg-tertiary);
+  border:none;
+  width:36px;
+  height:36px;
+  border-radius:8px;
+  font-size:1.5rem;
+  color:var(--text-secondary);
+  cursor:pointer;
+  padding:0;
+  line-height:1;
+  transition:all 0.2s ease;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  margin-left:1rem;
+}
+
+.modal-close:hover{
+  background:var(--status-red);
+  color:#FFFFFF;
+  transform:scale(1.1);
+}
+
+.modal-body{
+  margin-top:1.5rem;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   RESPONSIVE MOBILE
+   ══════════════════════════════════════════════════════════════════════════ */
+@media(max-width:768px){
+  .header-content{
+    padding:1rem;
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  
+  .header-title{
+    font-size:1.25rem;
+  }
+  
+  .header-subtitle{
+    font-size:0.75rem;
+  }
+  
+  .header-badge{
+    font-size:0.6875rem;
+    padding:0.375rem 0.75rem;
+    align-self:flex-start;
+  }
+  
+  .nav-tabs-container{
+    padding:0 1rem;
+  }
+  
+  .nav-tab{
+    font-size:0.8125rem;
+    padding:0.875rem 1rem;
+  }
+  
+  .main-container{
+    padding:1rem;
+  }
+  
+  .summary-grid{
+    grid-template-columns:1fr;
+    gap:1rem;
+  }
+  
+  .summary-stat{
+    padding:1.25rem 1rem;
+  }
+  
+  .summary-stat-value{
+    font-size:2rem;
+  }
+  
+  .cards-grid{
+    grid-template-columns:1fr;
+    gap:1rem;
+  }
+  
+  .section-container{
+    padding:1.25rem;
+  }
+  
+  .section-title{
+    font-size:1.25rem;
+  }
+  
+  .chart-container{
+    height:300px;
+  }
+  
+  .charts-split{
+    grid-template-columns:1fr;
+    gap:1.5rem;
+  }
+  
+  .ministerios-grid{
+    grid-template-columns:1fr;
+    gap:1rem;
+  }
+  
+  .ministerio-stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+  
+  .prioridades-grid{
+    grid-template-columns:1fr;
+    gap:1rem;
+  }
+  
+  .modal-content{
+    padding:1.5rem;
+    margin:1rem;
+    max-height:calc(100vh - 2rem);
+  }
+  
+  .modal-title{
+    font-size:1.25rem;
+  }
+}
+
+@media(max-width:480px){
+  .header-title{
+    font-size:1.125rem;
+  }
+  
+  .nav-tab{
+    font-size:0.75rem;
+    padding:0.75rem 0.875rem;
+  }
+  
+  .summary-stat-value{
+    font-size:1.75rem;
+  }
+  
+  .gauge-wrapper{
+    height:180px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   SCROLLBAR PERSONALIZADO
+   ══════════════════════════════════════════════════════════════════════════ */
+::-webkit-scrollbar{
+  width:8px;
+  height:8px;
+}
+
+::-webkit-scrollbar-track{
+  background:var(--bg-tertiary);
+}
+
+::-webkit-scrollbar-thumb{
+  background:var(--border-medium);
+  border-radius:4px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+  background:var(--text-tertiary);
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     HEADER
+     ══════════════════════════════════════════════════════════════════════════ -->
+<div class="header">
+  <div class="header-content">
+    <div class="header-title-section">
+      <h1 class="header-title">Dashboard Ejecutivo Presidencial</h1>
+      <p class="header-subtitle">Sistema de Seguimiento de Prioridades Nacionales · CENGOB</p>
+    </div>
+    <div class="header-badge">Nivel Presidencial</div>
+  </div>
+  
+  <div class="nav-tabs">
+    <div class="nav-tabs-container">
+      <button class="nav-tab active" onclick="switchTab(0)">Prioridades Iniciales</button>
+      <button class="nav-tab" onclick="switchTab(1)">Prioridades por Eje</button>
+      <button class="nav-tab" onclick="switchTab(2)">Seguimiento Ministerial</button>
+      <button class="nav-tab" onclick="switchTab(3)">Todas las Prioridades</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     MAIN CONTENT
+     ══════════════════════════════════════════════════════════════════════════ -->
+<div class="main-container">
+  
+  <!-- TAB 1: PRIORIDADES INICIALES -->
+  <div class="tab-content active" id="tab0">
+    <div class="summary-grid">
+      <div class="summary-stat">
+        <div class="summary-stat-label">Total Leyes Prioritarias</div>
+        <div class="summary-stat-value">
+          4 <span class="summary-stat-icon">⚖️</span>
+        </div>
+      </div>
+      <div class="summary-stat">
+        <div class="summary-stat-label">Promedio de Avance</div>
+        <div class="summary-stat-value" id="leyesAvgIAE">--%</div>
+      </div>
+    </div>
+    
+    <div class="cards-grid" id="leyesGrid"></div>
+  </div>
+
+  <!-- TAB 2: PRIORIDADES POR EJE -->
+  <div class="tab-content" id="tab1">
+    <div class="summary-grid">
+      <div class="summary-stat">
+        <div class="summary-stat-label">Ejes Estratégicos</div>
+        <div class="summary-stat-value">
+          6 <span class="summary-stat-icon">🎯</span>
+        </div>
+      </div>
+      <div class="summary-stat">
+        <div class="summary-stat-label">Promedio General</div>
+        <div class="summary-stat-value" id="ejesAvgIAE">--%</div>
+      </div>
+    </div>
+    
+    <div class="cards-grid" id="ejesGrid"></div>
+    
+    <div class="section-container">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Avance por Eje Estratégico</h2>
+          <p class="section-subtitle">Comparativa de índice de avance por etapas (%)</p>
+        </div>
+      </div>
+      <div class="chart-container">
+        <canvas id="ejesBarChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: SEGUIMIENTO MINISTERIAL -->
+  <div class="tab-content" id="tab2">
+    <div class="section-container">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Resumen General de Prioridades</h2>
+          <p class="section-subtitle">Distribución por estado de avance</p>
+        </div>
+      </div>
+      <div class="charts-split">
+        <div class="chart-container-small">
+          <canvas id="minResumenBarChart"></canvas>
+        </div>
+        <div class="chart-container-small">
+          <canvas id="minResumenDonutChart"></canvas>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section-container">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Detalle por Ministerio</h2>
+          <p class="section-subtitle">Estado de prioridades por institución responsable</p>
+        </div>
+      </div>
+      <div class="ministerios-grid" id="ministeriosGrid"></div>
+    </div>
+  </div>
+
+  <!-- TAB 4: TODAS LAS PRIORIDADES -->
+  <div class="tab-content" id="tab3">
+    <div class="summary-grid">
+      <div class="summary-stat">
+        <div class="summary-stat-label">Total Prioridades</div>
+        <div class="summary-stat-value" id="totalPrioridades">
+          0 <span class="summary-stat-icon">📋</span>
+        </div>
+      </div>
+      <div class="summary-stat">
+        <div class="summary-stat-label">Promedio de Avance</div>
+        <div class="summary-stat-value" id="prioridadesAvgIAE">--%</div>
+      </div>
+    </div>
+    
+    <div class="prioridades-grid" id="prioridadesGrid"></div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     MODAL
+     ══════════════════════════════════════════════════════════════════════════ -->
+<div class="modal" id="detalleModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modalTitle"></h3>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════════
+// DATOS
+// ══════════════════════════════════════════════════════════════════════════
+const DATA = {
+  leyes: [
+    {codigo:'i1',nombre:'Fortalecimiento de cooperativas, PyMES y emprendimientos',iae:28.6},
+    {codigo:'i10',nombre:'Modificación de la Ley 843 - Impuesto al Valor Agregado',iae:28.6},
+    {codigo:'i13',nombre:'Seguro Universal de Salud y creación de FONASA',iae:28.6},
+    {codigo:'i16',nombre:'Ley de Protección a la persona Adulta Mayor',iae:28.6}
+  ],
+  ejes: [
+    {nombre:'Seguridad Ciudadana',prioridades:8,iae:51.8},
+    {nombre:'Fortalecimiento de la Educación',prioridades:4,iae:46.4},
+    {nombre:'Salud y atención Integral',prioridades:5,iae:48.6},
+    {nombre:'Reactivación económica y generación de empleos',prioridades:8,iae:46.4},
+    {nombre:'Agua, saneamiento e infraestructura',prioridades:5,iae:65.7},
+    {nombre:'Política exterior y defensa',prioridades:2,iae:14.3}
+  ],
+  ministerios: [
+    {nombre:'Ministerio de Economía y Finanzas Públicas',total:6,verde:1,amarillo:1,rojo:1,sin_inicio:3},
+    {nombre:'Ministerio de Educación',total:4,verde:0,amarillo:3,rojo:1,sin_inicio:0},
+    {nombre:'Ministerio de Gobierno',total:8,verde:4,amarillo:1,rojo:2,sin_inicio:1},
+    {nombre:'Ministerio de Justicia y Transparencia Institucional',total:1,verde:0,amarillo:0,rojo:0,sin_inicio:1},
+    {nombre:'Ministerio de Obras Públicas, Servicios y Vivienda',total:2,verde:2,amarillo:0,rojo:0,sin_inicio:0},
+    {nombre:'Ministerio de Planificación del Desarrollo',total:2,verde:2,amarillo:0,rojo:0,sin_inicio:0},
+    {nombre:'Ministerio de Relaciones Exteriores',total:2,verde:0,amarillo:0,rojo:1,sin_inicio:1},
+    {nombre:'Ministerio de Salud y Deportes',total:5,verde:1,amarillo:2,rojo:2,sin_inicio:0},
+    {nombre:'Ministerio de Trabajo, Empleo y Previsión Social',total:2,verde:1,amarillo:0,rojo:1,sin_inicio:0}
+  ],
+  todas_prioridades: [
+    {codigo:'i1',nombre:'Fortalecimiento de cooperativas, PyMES y emprendimientos',eje:'Reactivación económica y generación de empleos',iae:28.6},
+    {codigo:'i10',nombre:'Modificación de la Ley 843 - Impuesto al Valor Agregado',eje:'Reactivación económica y generación de empleos',iae:28.6},
+    {codigo:'i11',nombre:'Acceso Universal a Educación Inicial',eje:'Fortalecimiento de la Educación',iae:71.4},
+    {codigo:'i12',nombre:'Mejoramiento de Infraestructura Educativa en Centros Fiscales',eje:'Fortalecimiento de la Educación',iae:57.1},
+    {codigo:'i13',nombre:'Seguro Universal de Salud y creación de FONASA',eje:'Salud y atención Integral',iae:28.6},
+    {codigo:'i14',nombre:'Ampliación de Infraestructura Hospitalaria',eje:'Salud y atención Integral',iae:57.1},
+    {codigo:'i15',nombre:'Fortalecimiento del Sistema de Referencia y Contrarreferencia',eje:'Salud y atención Integral',iae:57.1},
+    {codigo:'i16',nombre:'Ley de Protección a la persona Adulta Mayor',eje:'Salud y atención Integral',iae:28.6},
+    {codigo:'i17',nombre:'Ampliación de Coberturas de Bonos Sociales',iae:28.6},
+    {codigo:'i18',nombre:'Fortalecimiento de Capacidades de la Fuerza Especial de Lucha Contra el Narcotráfico',eje:'Seguridad Ciudadana',iae:71.4},
+    {codigo:'i19',nombre:'Fortalecimiento de la Policía Boliviana',eje:'Seguridad Ciudadana',iae:57.1},
+    {codigo:'i2',nombre:'Proyecto de Ley del Sistema Penitenciario',eje:'Seguridad Ciudadana',iae:57.1},
+    {codigo:'i20',nombre:'Seguridad Ciudadana',eje:'Seguridad Ciudadana',iae:71.4},
+    {codigo:'i21',nombre:'Creación del Viceministerio de Seguridad Ciudadana',eje:'Seguridad Ciudadana',iae:71.4},
+    {codigo:'i22',nombre:'Cumbre de Jefes de Estado de Bolivia con China',eje:'Política exterior y defensa',iae:0.0},
+    {codigo:'i23',nombre:'Fortalecimiento de las Fuerzas Armadas',eje:'Política exterior y defensa',iae:28.6},
+    {codigo:'i24',nombre:'Infraestructura Vial',eje:'Agua, saneamiento e infraestructura',iae:71.4},
+    {codigo:'i25',nombre:'Vivienda Social',eje:'Agua, saneamiento e infraestructura',iae:71.4},
+    {codigo:'i26',nombre:'Agua y Saneamiento',eje:'Agua, saneamiento e infraestructura',iae:71.4},
+    {codigo:'i27',nombre:'Reactivación del Sistema Regulatorio de Telecomunicaciones y Transportes',eje:'Reactivación económica y generación de empleos',iae:71.4},
+    {codigo:'i28',nombre:'Incremento del salario mínimo nacional',eje:'Reactivación económica y generación de empleos',iae:57.1},
+    {codigo:'i29',nombre:'Bono contra el Hambre',eje:'Reactivación económica y generación de empleos',iae:71.4},
+    {codigo:'i3',nombre:'Programa de Mejoramiento de Infraestructura Penitenciaria',eje:'Seguridad Ciudadana',iae:28.6},
+    {codigo:'i30',nombre:'Incremento en las regalías de Hidrocarburos para Municipios',eje:'Reactivación económica y generación de empleos',iae:28.6},
+    {codigo:'i31',nombre:'Fortalecimiento del rol del Estado en la Economía',eje:'Reactivación económica y generación de empleos',iae:42.9},
+    {codigo:'i32',nombre:'Mantenimiento Vial',eje:'Agua, saneamiento e infraestructura',iae:57.1},
+    {codigo:'i4',nombre:'Sistema Nacional Unificado de Identificación Ciudadana',eje:'Seguridad Ciudadana',iae:28.6},
+    {codigo:'i5',nombre:'Programa Piloto de Bachillerato Técnico Humanístico',eje:'Fortalecimiento de la Educación',iae:28.6},
+    {codigo:'i6',nombre:'Conectividad Digital para todos (Fase 1: Centros Educativos)',eje:'Fortalecimiento de la Educación',iae:28.6},
+    {codigo:'i7',nombre:'Fomento al Empleo Juvenil',eje:'Reactivación económica y generación de empleos',iae:57.1},
+    {codigo:'i9',nombre:'Ampliación del Sistema Integrado de Salud',eje:'Salud y atención Integral',iae:71.4}
+  ]
+};
+
+// ══════════════════════════════════════════════════════════════════════════
+// NAVEGACIÓN
+// ══════════════════════════════════════════════════════════════════════════
+function switchTab(index) {
+  const tabs = document.querySelectorAll('.nav-tab');
+  const contents = document.querySelectorAll('.tab-content');
+  
+  tabs.forEach((tab, i) => {
+    if (i === index) {
+      tab.classList.add('active');
+      contents[i].classList.add('active');
+    } else {
+      tab.classList.remove('active');
+      contents[i].classList.remove('active');
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// MODAL
+// ══════════════════════════════════════════════════════════════════════════
+function showDetalle(prio) {
+  const modal = document.getElementById('detalleModal');
+  document.getElementById('modalTitle').textContent = prio.nombre;
+  document.getElementById('modalBody').innerHTML = `
+    <div style="margin-bottom:1.5rem">
+      <div style="display:flex;gap:1rem;margin-bottom:1rem">
+        <div style="background:var(--bg-tertiary);padding:0.75rem 1rem;border-radius:8px;flex:1">
+          <div style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:0.25rem">CÓDIGO</div>
+          <div style="font-weight:700;color:var(--primary)">${prio.codigo}</div>
+        </div>
+        <div style="background:var(--bg-tertiary);padding:0.75rem 1rem;border-radius:8px;flex:1">
+          <div style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:0.25rem">IAE</div>
+          <div style="font-weight:700;color:var(--accent-gold);font-size:1.25rem">${prio.iae.toFixed(1)}%</div>
+        </div>
+      </div>
+      <div style="background:var(--bg-tertiary);padding:0.75rem 1rem;border-radius:8px">
+        <div style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:0.25rem">EJE ESTRATÉGICO</div>
+        <div style="font-weight:600;color:var(--text-primary)">${prio.eje || 'No especificado'}</div>
+      </div>
+    </div>
+    <div id="modalGauge" style="height:250px"></div>
+  `;
+  modal.classList.add('show');
+  setTimeout(() => createGauge('modalGauge', prio.iae), 100);
+}
+
+function closeModal() {
+  document.getElementById('detalleModal').classList.remove('show');
+}
+
+window.onclick = function(event) {
+  const modal = document.getElementById('detalleModal');
+  if (event.target === modal) {
+    closeModal();
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// GAUGE (AMCHARTS)
+// ══════════════════════════════════════════════════════════════════════════
+function createGauge(containerId, value) {
+  const root = am5.Root.new(containerId);
+  root.setThemes([am5themes_Animated.new(root)]);
+  
+  const chart = root.container.children.push(am5radar.RadarChart.new(root, {
+    panX: false,
+    panY: false,
+    startAngle: 180,
+    endAngle: 360
+  }));
+  
+  const axisRenderer = am5radar.AxisRendererCircular.new(root, {
+    innerRadius: -20,
+    strokeOpacity: 0.1,
+    minGridDistance: 50
+  });
+  
+  axisRenderer.grid.template.setAll({
+    stroke: am5.color(0xd1d5db),
+    strokeWidth: 1,
+    strokeOpacity: 0.3
+  });
+  
+  const xAxis = chart.xAxes.push(am5xy.ValueAxis.new(root, {
+    maxDeviation: 0,
+    min: 0,
+    max: 100,
+    strictMinMax: true,
+    renderer: axisRenderer
+  }));
+  
+  const axisDataItem = xAxis.makeDataItem({});
+  axisDataItem.set("value", 0);
+  
+  const bullet = axisDataItem.set("bullet", am5xy.AxisBullet.new(root, {
+    sprite: am5radar.ClockHand.new(root, {
+      radius: am5.percent(95),
+      innerRadius: 20,
+      bottomWidth: 10,
+      topWidth: 0,
+      fill: am5.color(0x0A3D2B)
+    })
+  }));
+  
+  xAxis.createAxisRange(axisDataItem);
+  
+  axisDataItem.get("grid").set("visible", false);
+  
+  // Rangos de color
+  const bandsData = [
+    {value: 40, color: 0xEF4444, label: "Crítico"},
+    {value: 70, color: 0xF59E0B, label: "En Proceso"},
+    {value: 100, color: 0x10B981, label: "Avanzado"}
+  ];
+  
+  for (let i = 0; i < bandsData.length; i++) {
+    const previousValue = i > 0 ? bandsData[i - 1].value : 0;
+    const range = xAxis.createAxisRange(xAxis.makeDataItem({
+      above: true,
+      value: previousValue,
+      endValue: bandsData[i].value
+    }));
+    
+    range.get("axisFill").setAll({
+      visible: true,
+      fill: am5.color(bandsData[i].color),
+      fillOpacity: 0.3
+    });
+    
+    range.get("label").setAll({
+      text: bandsData[i].label,
+      inside: true,
+      radius: 15,
+      fontSize: "0.7em",
+      fill: am5.color(0x6B7280)
+    });
+  }
+  
+  // Label central
+  const label = chart.radarContainer.children.push(am5.Label.new(root, {
+    centerX: am5.percent(50),
+    textAlign: "center",
+    centerY: am5.percent(50),
+    fontSize: "2em",
+    fontWeight: "700",
+    fill: am5.color(0x0A3D2B)
+  }));
+  
+  // Animar
+  axisDataItem.animate({
+    key: "value",
+    to: value,
+    duration: 1500,
+    easing: am5.ease.out(am5.ease.cubic)
+  });
+  
+  axisDataItem.on("value", function(val) {
+    label.set("text", Math.round(val) + "%");
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// RENDERIZAR LEYES
+// ══════════════════════════════════════════════════════════════════════════
+function renderLeyes() {
+  const grid = document.getElementById('leyesGrid');
+  grid.innerHTML = '';
+  
+  let totalIAE = 0;
+  
+  DATA.leyes.forEach((ley, index) => {
+    const gaugeId = 'gauge-ley-' + index;
+    const card = document.createElement('div');
+    card.className = 'priority-card';
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="card-title">${ley.codigo}</div>
+        <div class="card-name">${ley.nombre}</div>
+      </div>
+      <div class="gauge-wrapper" id="${gaugeId}"></div>
+    `;
+    grid.appendChild(card);
+    
+    setTimeout(() => createGauge(gaugeId, ley.iae), 100);
+    totalIAE += ley.iae;
+  });
+  
+  const avgIAE = totalIAE / DATA.leyes.length;
+  document.getElementById('leyesAvgIAE').textContent = avgIAE.toFixed(1) + '%';
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// RENDERIZAR EJES
+// ══════════════════════════════════════════════════════════════════════════
+function renderEjes() {
+  const grid = document.getElementById('ejesGrid');
+  grid.innerHTML = '';
+  
+  let totalIAE = 0;
+  
+  DATA.ejes.forEach((eje, index) => {
+    const gaugeId = 'gauge-eje-' + index;
+    const card = document.createElement('div');
+    card.className = 'priority-card';
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="card-title">${eje.prioridades} prioridades</div>
+        <div class="card-name">${eje.nombre}</div>
+      </div>
+      <div class="gauge-wrapper" id="${gaugeId}"></div>
+    `;
+    grid.appendChild(card);
+    
+    setTimeout(() => createGauge(gaugeId, eje.iae), 100);
+    totalIAE += eje.iae;
+  });
+  
+  const avgIAE = totalIAE / DATA.ejes.length;
+  document.getElementById('ejesAvgIAE').textContent = avgIAE.toFixed(1) + '%';
+  
+  setTimeout(renderEjesBarChart, 200);
+}
+
+function renderEjesBarChart() {
+  const ctx = document.getElementById('ejesBarChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: DATA.ejes.map(e => e.nombre),
+      datasets: [{
+        label: 'IAE (%)',
+        data: DATA.ejes.map(e => e.iae),
+        backgroundColor: '#C8A050',
+        borderColor: '#C8A050',
+        borderWidth: 0,
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          padding: 12,
+          titleFont: { size: 14, weight: '600' },
+          bodyFont: { size: 13 },
+          callbacks: {
+            label: (context) => 'IAE: ' + context.parsed.y.toFixed(1) + '%'
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100,
+          grid: {
+            color: 'rgba(0,0,0,0.05)'
+          },
+          ticks: {
+            callback: (value) => value + '%',
+            font: { size: 12 }
+          }
+        },
+        x: {
+          grid: {
+            display: false
+          },
+          ticks: {
+            font: { size: 11 }
+          }
+        }
+      }
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// RENDERIZAR MINISTERIOS
+// ══════════════════════════════════════════════════════════════════════════
+function renderMinisterios() {
+  const grid = document.getElementById('ministeriosGrid');
+  grid.innerHTML = '';
+  
+  DATA.ministerios.forEach(min => {
+    const card = document.createElement('div');
+    card.className = 'ministerio-card';
+    card.innerHTML = `
+      <div class="ministerio-name">${min.nombre}</div>
+      <div class="ministerio-stats">
+        <div class="ministerio-stat stat-green">
+          <div class="ministerio-stat-value">${min.verde}</div>
+          <div class="ministerio-stat-label">Verde</div>
+        </div>
+        <div class="ministerio-stat stat-yellow">
+          <div class="ministerio-stat-value">${min.amarillo}</div>
+          <div class="ministerio-stat-label">Amarillo</div>
+        </div>
+        <div class="ministerio-stat stat-red">
+          <div class="ministerio-stat-value">${min.rojo}</div>
+          <div class="ministerio-stat-label">Rojo</div>
+        </div>
+        <div class="ministerio-stat stat-gray">
+          <div class="ministerio-stat-value">${min.sin_inicio}</div>
+          <div class="ministerio-stat-label">Sin Inicio</div>
+        </div>
+      </div>
+      <div class="ministerio-total">
+        Total: <strong>${min.total}</strong> prioridades
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+  
+  setTimeout(renderMinResumenCharts, 200);
+}
+
+function renderMinResumenCharts() {
+  let totalVerde = 0, totalAmarillo = 0, totalRojo = 0, totalSinInicio = 0;
+  
+  DATA.ministerios.forEach(m => {
+    totalVerde += m.verde;
+    totalAmarillo += m.amarillo;
+    totalRojo += m.rojo;
+    totalSinInicio += m.sin_inicio;
+  });
+  
+  // Gráfico de barras
+  const ctx1 = document.getElementById('minResumenBarChart').getContext('2d');
+  new Chart(ctx1, {
+    type: 'bar',
+    data: {
+      labels: DATA.ministerios.map(m => m.nombre.split(' ').slice(0, 3).join(' ')),
+      datasets: [
+        {
+          label: 'Verde',
+          data: DATA.ministerios.map(m => m.verde),
+          backgroundColor: '#10B981',
+          borderRadius: 4
+        },
+        {
+          label: 'Amarillo',
+          data: DATA.ministerios.map(m => m.amarillo),
+          backgroundColor: '#F59E0B',
+          borderRadius: 4
+        },
+        {
+          label: 'Rojo',
+          data: DATA.ministerios.map(m => m.rojo),
+          backgroundColor: '#EF4444',
+          borderRadius: 4
+        },
+        {
+          label: 'Sin Inicio',
+          data: DATA.ministerios.map(m => m.sin_inicio),
+          backgroundColor: '#6B7280',
+          borderRadius: 4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: { font: { size: 12 }, padding: 12 }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          padding: 12
+        }
+      },
+      scales: {
+        x: {
+          stacked: true,
+          grid: { display: false },
+          ticks: { font: { size: 10 } }
+        },
+        y: {
+          stacked: true,
+          beginAtZero: true,
+          grid: { color: 'rgba(0,0,0,0.05)' },
+          ticks: { font: { size: 11 } }
+        }
+      }
+    }
+  });
+  
+  // Gráfico de dona
+  const ctx2 = document.getElementById('minResumenDonutChart').getContext('2d');
+  new Chart(ctx2, {
+    type: 'doughnut',
+    data: {
+      labels: ['Verde', 'Amarillo', 'Rojo', 'Sin Inicio'],
+      datasets: [{
+        data: [totalVerde, totalAmarillo, totalRojo, totalSinInicio],
+        backgroundColor: ['#10B981', '#F59E0B', '#EF4444', '#6B7280'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: { font: { size: 12 }, padding: 10 }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          padding: 12
+        }
+      }
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// RENDERIZAR TODAS LAS PRIORIDADES
+// ══════════════════════════════════════════════════════════════════════════
+function renderTodasPrioridades() {
+  const grid = document.getElementById('prioridadesGrid');
+  grid.innerHTML = '';
+  
+  document.getElementById('totalPrioridades').innerHTML = 
+    DATA.todas_prioridades.length + ' <span class="summary-stat-icon">📋</span>';
+  
+  let totalIAE = 0;
+  
+  DATA.todas_prioridades.forEach((prio, index) => {
+    const gaugeId = 'gauge-prio-' + index;
+    const card = document.createElement('div');
+    card.className = 'prioridad-item';
+    card.onclick = () => showDetalle(prio);
+    
+    card.innerHTML = `
+      <div class="prioridad-header">
+        <div class="prioridad-code">${prio.codigo}</div>
+        <div class="prioridad-name">${prio.nombre}</div>
+      </div>
+      <div class="prioridad-eje">${prio.eje || 'Sin eje asignado'}</div>
+      <div class="gauge-wrapper" id="${gaugeId}" style="height:180px"></div>
+    `;
+    grid.appendChild(card);
+    
+    setTimeout(() => createGauge(gaugeId, prio.iae), 100);
+    totalIAE += prio.iae;
+  });
+  
+  const avgIAE = totalIAE / DATA.todas_prioridades.length;
+  document.getElementById('prioridadesAvgIAE').textContent = avgIAE.toFixed(1) + '%';
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// INICIALIZACIÓN
+// ══════════════════════════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  renderLeyes();
+  renderEjes();
+  renderMinisterios();
+  renderTodasPrioridades();
+});
+</script>
+
+</body>
+</html># CENGOB Bolivia — IAE v28
 
 **Centro de Gobierno · Índice de Avance de Ejecución**  
 Sistema de seguimiento y validación ministerial de intervenciones prioritarias del Órgano Ejecutivo Plurinacional de Bolivia.
